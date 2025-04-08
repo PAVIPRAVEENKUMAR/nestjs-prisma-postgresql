@@ -10,7 +10,7 @@ import { JsonWebTokenError, TokenExpiredError, verify, JwtPayload } from 'jsonwe
 import 'dotenv/config';
 import { jwtPayload } from 'src/users/types/jwtPayload';
 import { GUARD_KEY, ROLE_KEY } from '../constants';
-import { UserRole,User } from '@prisma/client';
+import { UserRole} from '@prisma/client';
 
 @Injectable()
 export default class GlobalGuard implements CanActivate {
@@ -51,8 +51,8 @@ export default class GlobalGuard implements CanActivate {
           }
 
           const user: jwtPayload = {
-              id: decoded.sub as string,
-              email: decoded.email as string,
+              id: Number(decoded.sub),
+              email: decoded.email,
               role: decoded.role as UserRole,
           };
 

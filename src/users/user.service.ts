@@ -46,10 +46,9 @@ export class UsersService {
     return { users, total, page, limit };
   }
    
-  async findOne(id: string) {
-    const numericId = parseInt(id, 10);
+  async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
-      where: { id: numericId },
+      where: { id},
     });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -66,18 +65,16 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, data: UpdateUserDto) {
-    const numericId = parseInt(id, 10);
+  async update(id:number, data: UpdateUserDto) {
     return await this.prisma.user.update({
-      where: { id: numericId  },
+      where: { id},
       data,
     });
   }
 
-  async remove(id: string) {
-    const numericId = parseInt(id, 10);
+  async remove(id:number) {
     await this.prisma.user.delete({
-      where: { id: numericId  },
+      where: {id},
     });
 
     return { message: `User with ID ${id} deleted` };

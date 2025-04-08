@@ -1,4 +1,4 @@
-import {Controller,Get,Post,Body,Patch,Param,Delete} from '@nestjs/common';
+import {Controller,Get,Post,Body,Patch,Param,Delete, ParseIntPipe} from '@nestjs/common';
 import { UsersService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -66,21 +66,21 @@ import { signinDto } from './dto/signin-user.dto';
   @Get(':id')
   @ApiOperation({ description: 'Find a user by id.' })
   @AllowRoles(UserRole.ADMIN, UserRole.STAFF)
-    async findOne(@Param('id') id: string) {
+    async findOne(@Param('id',ParseIntPipe) id:number) {
       return this.usersService.findOne(id);
     }
   
   @Patch(':id')
   @ApiOperation({ description: 'Update a user by id.' })
   @AllowRoles(UserRole.ADMIN)
-    async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    async update(@Param('id',ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
       return this.usersService.update(id, updateUserDto);
     }
   
   @Delete(':id')
   @ApiOperation({ description: 'Delete a user by id.' })
   @AllowRoles(UserRole.ADMIN)
-    async remove(@Param('id') id: string) {
+    async remove(@Param('id', ParseIntPipe) id:number) {
       return this.usersService.remove(id);
     }
   }

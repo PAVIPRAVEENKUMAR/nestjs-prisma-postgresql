@@ -9,7 +9,7 @@ import {
   import { sign } from 'jsonwebtoken';
   import { CreateUserDto } from './dto/create-user.dto';
   import { jwtPayload } from './types/jwtPayload';
-  import { UserRole,User } from '@prisma/client';
+  import { UserRole} from '@prisma/client';
   
   const scrypt = promisify(_scrypt);
   
@@ -35,7 +35,7 @@ import {
   
       const jwtPayload: jwtPayload = {
         email: user.email,
-        id: user.id.toString(),
+        id: user.id,
         role: user.role as UserRole,
       };
   
@@ -57,8 +57,8 @@ import {
   
       const jwtPayload: jwtPayload = {
         email: user.email,
-        id: user.id.toString(),
-        role: user.role as UserRole,
+        id: user.id,
+        role: user.role,
       };
   
       return sign(jwtPayload, process.env.JWT_SECRET as string, { expiresIn: '24h' });
