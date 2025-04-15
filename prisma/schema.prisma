@@ -23,8 +23,8 @@ model User {
   updatedAt  DateTime @updatedAt
   isSignedUp Boolean  @default(false)
 
-  departmentsLed     Department[] @relation("DepartmentLead")
-  departmentsCreated Department[] @relation("DepartmentCreator")
+  departmentsLed     department[] @relation("DepartmentLead")
+  departmentsCreated department[] @relation("DepartmentCreator")
 
   jobOpenings JobOpening[] @relation("HiringManager")
 
@@ -32,7 +32,7 @@ model User {
   JobPipeline  JobPipeline[]
 }
 
-model Department {
+model department {
   id               String       @id @default(uuid())
   name             String       @unique
   departmentLeadId String
@@ -53,10 +53,10 @@ model JobOpening {
   id                   String                   @id @default(uuid())
   internalJobCode      String
   postingTitle         String                   @unique
-  jobTitleId           Int?   
+  jobTitleId           Int?
   jobTitle             Jobtitle?                @relation(fields: [jobTitleId], references: [id])
   departmentId         String
-  department           Department               @relation(fields: [departmentId], references: [id])
+  department           department               @relation(fields: [departmentId], references: [id])
   assignedRecruiters   User[]                   @relation("AssignedRecruiters")
   hiringManagerId      String
   hiringManager        User                     @relation("HiringManager", fields: [hiringManagerId], references: [id])

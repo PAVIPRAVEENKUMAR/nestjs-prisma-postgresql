@@ -1,7 +1,7 @@
 import { BadRequestException, NotFoundException, Injectable } from "@nestjs/common";
 import { CreateJobOpeningDto} from './dto/create-job-opening.dto';
 import { UpdateJobOpeningDto } from './dto/update-job-opening.dto';
-import {PrismaService} from "../prisma/prisma.service"
+import {PrismaService} from "../prisma/prisma.service";
 
 @Injectable()
 export class JobopeningsService {
@@ -17,18 +17,18 @@ export class JobopeningsService {
           numberOfVacancies,
           department,
           hiringManager,
-          postingTitle,
+          postingTitle
         } = createJobOpeningDto;
     
-        const jobTitleExists = await this.prisma.jobtitle.findUnique({where: {id: jobTitle}});
+        //const jobTitleExists = await this.prisma.jobtitle.findUnique({where: {id: jobTitle}});
 
-        if (!jobTitleExists) throw new BadRequestException('Job Title not found');
+        //if (!jobTitleExists) throw new BadRequestException('Job Title not found');
     
         const departmentExists = await this.prisma.department.findUnique({ where: { id: department } });
 
         if (!departmentExists) throw new BadRequestException('Department not found');
     
-        const hiringManagerExists = await this.prisma.jobOpening.findUnique({where: {id: hiringManager }});
+        const hiringManagerExists = await this.prisma.user.findUnique({where: {id: hiringManager }});
 
         if (!hiringManagerExists) throw new BadRequestException('Hiring Manager not found');
     
@@ -36,7 +36,7 @@ export class JobopeningsService {
         return await this.prisma.jobOpening.create({
           data: {
             internalJobCode,
-            jobTitle: { connect: { id: jobTitle } },
+            //jobTitle: { connect: { id: jobTitle } },
             department: { connect: { id: department } },
             hiringManager: { connect: { id: hiringManager } },
             postingTitle,
@@ -95,11 +95,22 @@ export class JobopeningsService {
           if (!exists) throw new BadRequestException('Hiring Manager not found');
           updateData.hiringManager = { connect: { id: update.hiringManager } };
         }
+
     
+        if (update.internalJobCode) updateData.internalJobCode = update.internalJobCode;
+        if (update.postingTitle) updateData.postingTitle = update.postingTitle;
         if (update.targetDate) updateData.targetDate = update.targetDate;
         if (update.initiationDate) updateData.initiationDate = update.initiationDate;
         if (update.numberOfVacancies) updateData.numberOfVacancies = update.numberOfVacancies;
-    
+        if (update.salaryRange) updateData.salaryRange = update.salaryRange;
+        if (update.address) updateData.address = update.address;
+        if (update.jobDescription) updateData.jobDescription = update.jobDescription;
+        if (update.requirements) updateData.requirements = update.requirements;
+        if (update.benefits) updateData.benefits = update.benefits;
+        if (update.industry) updateData.industry = update.industry;
+        if (update.jobType) updateData.jobType = update.jobType;
+        if (update.experienceLevel) updateData.experienceLevel = update.experienceLevel;
+        if (update.jobLocation) updateData.jobLocation = update.jobLocation;
         return this.prisma.jobOpening.update({
           where: { id },
           data: updateData,

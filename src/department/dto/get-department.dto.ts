@@ -11,5 +11,5 @@ export class GetDepartmentDto extends Pagination {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  departmentLead?: number;
+  departmentLead?: string;
 }

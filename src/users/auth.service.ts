@@ -29,8 +29,8 @@ import {
       const result = salt + '.' + hash.toString('hex');
       
       const user = await this.usersService.create({
-        ...body,
-        password: result,
+        data:body,
+        password: result
       });
   
       const jwtPayload: jwtPayload = {

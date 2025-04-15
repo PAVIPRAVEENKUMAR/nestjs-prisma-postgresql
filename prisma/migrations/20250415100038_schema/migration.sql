@@ -1,0 +1,179 @@
+/*
+  Warnings:
+
+  - The primary key for the `User` table will be changed. If it partially fails, the table could be left without primary key constraint.
+
+*/
+-- CreateEnum
+CREATE TYPE "JobOpeningStatus" AS ENUM ('DRAFT', 'OPEN', 'ON_HOLD', 'FILLED', 'CANCELLED', 'CLOSED');
+
+-- CreateEnum
+CREATE TYPE "JobType" AS ENUM ('FULL_TIME', 'PART_TIME', 'PERMANENT', 'CONTRACT', 'INTERNSHIP', 'ANY');
+
+-- CreateEnum
+CREATE TYPE "WorkExperience" AS ENUM ('NONE', 'FRESHER', 'ZERO_TO_ONE_YEAR', 'ONE_TO_TWO_YEARS', 'TWO_TO_THREE_YEARS', 'FIVE_PLUS_YEARS');
+
+-- CreateEnum
+CREATE TYPE "JobLocation" AS ENUM ('REMOTE', 'ONSITE', 'HYBRID');
+
+-- CreateEnum
+CREATE TYPE "ApplicationQuestionType" AS ENUM ('DEFAULT', 'ADDITIONAL');
+
+-- CreateEnum
+CREATE TYPE "AppplicationAdditionalQuestionType" AS ENUM ('SHORT_ANSWER', 'LONG_ANSWER', 'YES_NO', 'MULTIPLE_CHOICE', 'FILE_UPLOAD');
+
+-- CreateEnum
+CREATE TYPE "ApplicationDefaultQuestionType" AS ENUM ('RESUME', 'COVER_LETTER', 'HIGHER_EDUCATION', 'DESIRED_SALARY', 'ADDRESS', 'LINKEDIN_URL', 'COLLEGE_UNIVERSITY', 'CURRENT_COMPANY_NAME', 'REFFERED_BY', 'WEBSITE_PORTFOLIO');
+
+-- CreateEnum
+CREATE TYPE "JobPipelineStageType" AS ENUM ('NEW', 'RESUME_SHORTLIST', 'PHONE_SCREEN', 'INTERVIEW', 'APTITUDE_ONLIE_ASSESSMENT', 'TECHNICAL_INTERVIEW_R_1', 'TECHNICAL_INTERVIEW_R_2', 'MANAGERIAL_INTERVIEW', 'HR_INTERVIEW', 'OFFER', 'HIRED');
+
+-- CreateEnum
+CREATE TYPE "Industries" AS ENUM ('NONE', 'ADMINISTRATION', 'ADVERTISING', 'AGRICULTURE', 'AGRICULTURE_CONSTRUCTION', 'ARTS_GRAPHICS', 'AIRLINE_AVIATION', 'ACCOUNTING', 'AUTOMOTIVE', 'BANKING', 'BIOTECHNOLOGY', 'BROADCASTING', 'BUSINESS_MANAGEMENT', 'CHARITY', 'CATERING', 'CUSTOMER_SERVICE', 'CHEMICALS', 'CONSTRUCTION', 'COMMUNICATIONS', 'CONSULTING', 'COMPUTER', 'CONSUMER', 'COSMETICS', 'DESIGN', 'DEFENCE', 'EDUCATION', 'ELECTRONICS', 'ENGINEERING', 'EMPLOYMENT_RECRUITING_STAFFING', 'ENVIRONMENTAL', 'EXERCISE_FITNESS', 'EXPORT_IMPORT', 'FINANCIAL_SERVICES', 'FASHION', 'FMCG_FOODS_BEVERAGE', 'FERTILIZERS_PESTICIDES', 'FURNITURE', 'GROCERY', 'GAS', 'GOVERNMENT', 'GOVERNMENT_MILITARY', 'GOVERMENT_PUBLIC_SECTOR', 'GEMS_JEWELLERY', 'HEALTH_CARE', 'HUMAN_RESOURCES', 'HOSPITALITY', 'HOTELS_LODGING', 'HVAC', 'HARDWARE', 'INSURANCE', 'INSTALLATION', 'IT_SERVICES', 'INDUSTRIAL', 'INTERNET_SERVICES', 'IMPORT_EXPORT', 'LEGAL', 'LOGISTICS', 'LANDSCAPING', 'LEISURE_SPORT', 'LIBRARY_SCIENCE', 'MARKETING', 'MANUFACTURING', 'MANAGEMENT', 'MERCHANDISING', 'MEDICAL', 'MEDIA', 'METALS', 'MINING', 'MILITARY', 'MORTGAGE', 'MARINE', 'MARITIME', 'NONPROFIT_CHARITABLE_ORGANIZATIONS', 'NGO_SOCIAL_SERVICES', 'NEWSPAPER', 'OIL_GAS', 'OTHER', 'OTHER_NOT_CLASSIFIED', 'PHARMA', 'POLYMER_PLASTIC_RUBBER', 'PHARMA_BIOTECH_CLINICAL_RESEARCH', 'PUBLIC_SECTOR_GOVERNMENT', 'PRINTING_PACKAGING_PUBLISHING', 'PERSONAL_HOUSEHOLD_SERVICES', 'PROPERTY_REAL_ESTATE', 'PAPER', 'PET_STORE', 'PUBLIC_RELATIONS', 'REAL_ESTATE', 'RETAIL', 'RETAIL_WHOLESALE', 'RECREATION', 'REAL_ESTATE_PROPERTY', 'RECRUITMENT_EMPLOYMENT_FIRM', 'REAL_ESTATE_PROPERTY_MANAGEMENT', 'RESTAURANT_FOOD_SERVICES', 'RENTAL_SERVICES', 'RESEARCH_DEVELOPMENT', 'REPAIR_MAINTENANCE_SERVICES', 'SERVICES', 'SALES_MARKETING', 'SCIENCE_TECHNOLOGY', 'SECURITY_LAW_ENFORCEMENT', 'SHIPPING_MARINE', 'SECURITY_SURVEILLANCE', 'SPORTS_PHYSICAL_RECREATION', 'STAFFING_EMPLOYMENT_AGENCIES', 'SOCIAL_SERVICES', 'SPORTS_LEISURE_LIFESTYLE', 'SEMICONDUCTOR', 'TECHNOLOGY', 'SERVICES_CORPORATE_B2B', 'TRAVEL', 'TRAINING', 'TRANSPORTATION', 'TELECOMMUNICATIONS', 'TRADE_SERVICES', 'TRAVEL_TOURISM', 'TEXTILES_GARMENTS_ACCESSORIES', 'TYRES', 'UTILITIES', 'WIRELESS', 'WOOD_FIBRE_PAPER', 'WASTE_MANAGEMENT', 'WHOLESALE_TRADE_IMPORT_EXPORT');
+
+-- AlterTable
+ALTER TABLE "User" DROP CONSTRAINT "User_pkey",
+ALTER COLUMN "id" DROP DEFAULT,
+ALTER COLUMN "id" SET DATA TYPE TEXT,
+ADD CONSTRAINT "User_pkey" PRIMARY KEY ("id");
+DROP SEQUENCE "User_id_seq";
+
+-- CreateTable
+CREATE TABLE "department" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "departmentLeadId" TEXT NOT NULL,
+    "createdById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "department_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "JobOpening" (
+    "id" TEXT NOT NULL,
+    "internalJobCode" TEXT NOT NULL,
+    "postingTitle" TEXT NOT NULL,
+    "jobTitleId" INTEGER,
+    "departmentId" TEXT NOT NULL,
+    "hiringManagerId" TEXT NOT NULL,
+    "numberOfVacancies" INTEGER,
+    "industry" "Industries" NOT NULL DEFAULT 'NONE',
+    "jobType" "JobType" NOT NULL DEFAULT 'FULL_TIME',
+    "initiationDate" TIMESTAMP(3),
+    "targetDate" TIMESTAMP(3),
+    "status" "JobOpeningStatus" NOT NULL DEFAULT 'DRAFT',
+    "salaryRange" TEXT,
+    "experienceLevel" "WorkExperience" NOT NULL DEFAULT 'NONE',
+    "jobLocation" "JobLocation" NOT NULL DEFAULT 'ONSITE',
+    "addressId" INTEGER,
+    "requirements" TEXT,
+    "jobDescription" TEXT,
+    "benefits" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "JobOpening_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Jobtitle" (
+    "id" SERIAL NOT NULL,
+    "title" TEXT NOT NULL,
+
+    CONSTRAINT "Jobtitle_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "JobAddress" (
+    "id" SERIAL NOT NULL,
+    "addressLine" TEXT NOT NULL,
+    "province" TEXT,
+    "region" TEXT,
+    "country" TEXT,
+    "postalCode" TEXT,
+
+    CONSTRAINT "JobAddress_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "JobApplicationQuestion" (
+    "id" SERIAL NOT NULL,
+    "jobOpeningId" TEXT NOT NULL,
+    "questionType" "ApplicationQuestionType",
+    "AdditionalQuestionType" "AppplicationAdditionalQuestionType",
+    "defaultQuestionType" "ApplicationDefaultQuestionType",
+    "question" TEXT NOT NULL,
+    "options" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "isRequired" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "JobApplicationQuestion_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "JobPipeline" (
+    "id" TEXT NOT NULL,
+    "jobOpeningId" TEXT NOT NULL,
+    "stages" JSONB NOT NULL,
+    "createdById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "JobPipeline_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "_AssignedRecruiters" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_AssignedRecruiters_AB_pkey" PRIMARY KEY ("A","B")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "department_name_key" ON "department"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "JobOpening_postingTitle_key" ON "JobOpening"("postingTitle");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "JobPipeline_jobOpeningId_key" ON "JobPipeline"("jobOpeningId");
+
+-- CreateIndex
+CREATE INDEX "_AssignedRecruiters_B_index" ON "_AssignedRecruiters"("B");
+
+-- AddForeignKey
+ALTER TABLE "department" ADD CONSTRAINT "department_departmentLeadId_fkey" FOREIGN KEY ("departmentLeadId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "department" ADD CONSTRAINT "department_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "JobOpening" ADD CONSTRAINT "JobOpening_jobTitleId_fkey" FOREIGN KEY ("jobTitleId") REFERENCES "Jobtitle"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "JobOpening" ADD CONSTRAINT "JobOpening_departmentId_fkey" FOREIGN KEY ("departmentId") REFERENCES "department"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "JobOpening" ADD CONSTRAINT "JobOpening_hiringManagerId_fkey" FOREIGN KEY ("hiringManagerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "JobOpening" ADD CONSTRAINT "JobOpening_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "JobAddress"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "JobApplicationQuestion" ADD CONSTRAINT "JobApplicationQuestion_jobOpeningId_fkey" FOREIGN KEY ("jobOpeningId") REFERENCES "JobOpening"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "JobPipeline" ADD CONSTRAINT "JobPipeline_jobOpeningId_fkey" FOREIGN KEY ("jobOpeningId") REFERENCES "JobOpening"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "JobPipeline" ADD CONSTRAINT "JobPipeline_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_AssignedRecruiters" ADD CONSTRAINT "_AssignedRecruiters_A_fkey" FOREIGN KEY ("A") REFERENCES "JobOpening"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_AssignedRecruiters" ADD CONSTRAINT "_AssignedRecruiters_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

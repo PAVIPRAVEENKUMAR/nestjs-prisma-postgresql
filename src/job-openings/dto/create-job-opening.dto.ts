@@ -23,11 +23,9 @@ export class CreateJobOpeningDto {
 
   @ApiProperty()
   @IsString()
-  @IsOptional()
   department: string;
 
   @ApiProperty()
-  @IsOptional()
   @IsArray()
   assignedRecruiters?: string[];
 

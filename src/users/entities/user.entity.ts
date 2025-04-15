@@ -1,6 +1,6 @@
-import { Expose, Transform, Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { IsArray } from 'class-validator';
-import { UserRole,User } from '@prisma/client';
+import { UserRole} from '@prisma/client';
 
 export class UserEntity {
   @Expose()
