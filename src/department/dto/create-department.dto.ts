@@ -8,5 +8,5 @@ export class CreateDepartmentDto {
 
   @ApiProperty()
   @IsMongoId()
-  departmentLead: number;
+  departmentLead: string;
 }

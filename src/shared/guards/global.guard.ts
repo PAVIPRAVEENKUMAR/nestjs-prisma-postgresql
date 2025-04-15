@@ -51,7 +51,7 @@ export default class GlobalGuard implements CanActivate {
           }
 
           const user: jwtPayload = {
-              id: Number(decoded.sub),
+              id: decoded.string,
               email: decoded.email,
               role: decoded.role as UserRole,
           };

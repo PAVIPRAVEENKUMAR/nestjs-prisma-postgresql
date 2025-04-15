@@ -1,11 +1,11 @@
-import {Controller,Get,Post,Body,Patch,Param,Delete, ParseIntPipe} from '@nestjs/common';
+import {Controller,Get,Post,Body,Patch,Param,Delete} from '@nestjs/common';
 import { UsersService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUsersDto } from './dto/get-users.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AllowRoles } from '../shared/decorators/allowRoles.decorator';
-import { UserRole} from '@prisma/client';
+import {UserRole} from '@prisma/client';
 import { AuthService } from './auth.service';
 import { Serialize } from 'src/shared/interceptors/serialize.interceptor';
 import { UserEntity, UsersEntity } from './entities/user.entity';
@@ -66,21 +66,21 @@ import { signinDto } from './dto/signin-user.dto';
   @Get(':id')
   @ApiOperation({ description: 'Find a user by id.' })
   @AllowRoles(UserRole.ADMIN, UserRole.STAFF)
-    async findOne(@Param('id',ParseIntPipe) id:number) {
+    async findOne(@Param('id') id:string) {
       return this.usersService.findOne(id);
     }
   
   @Patch(':id')
   @ApiOperation({ description: 'Update a user by id.' })
   @AllowRoles(UserRole.ADMIN)
-    async update(@Param('id',ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
+    async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
       return this.usersService.update(id, updateUserDto);
     }
   
   @Delete(':id')
   @ApiOperation({ description: 'Delete a user by id.' })
   @AllowRoles(UserRole.ADMIN)
-    async remove(@Param('id', ParseIntPipe) id:number) {
+    async remove(@Param('id') id:string) {
       return this.usersService.remove(id);
     }
   }

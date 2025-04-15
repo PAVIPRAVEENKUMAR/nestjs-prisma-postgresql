@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   name       String
   email      String   @unique
   password   String
@@ -25,20 +25,304 @@ model User {
 
   departmentsLed     Department[] @relation("DepartmentLead")
   departmentsCreated Department[] @relation("DepartmentCreator")
+
+  jobOpenings JobOpening[] @relation("HiringManager")
+
+  assignedJobs JobOpening[]  @relation("AssignedRecruiters")
+  JobPipeline  JobPipeline[]
 }
 
 model Department {
-  id               String   @id @default(uuid())
-  name             String   @unique
-  departmentLeadId Int
-  departmentLead   User     @relation("DepartmentLead", fields: [departmentLeadId], references: [id])
-  createdById      Int
-  createdBy        User     @relation("DepartmentCreator", fields: [createdById], references: [id])
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id               String       @id @default(uuid())
+  name             String       @unique
+  departmentLeadId String
+  departmentLead   User         @relation("DepartmentLead", fields: [departmentLeadId], references: [id])
+  createdById      String
+  createdBy        User         @relation("DepartmentCreator", fields: [createdById], references: [id])
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  JobOpening       JobOpening[]
 }
 
 enum UserRole {
   ADMIN
   STAFF
+}
+
+model JobOpening {
+  id                   String                   @id @default(uuid())
+  internalJobCode      String
+  postingTitle         String                   @unique
+  jobTitleId           Int?
+  jobTitle             Jobtitle?                @relation(fields: [jobTitleId], references: [id])
+  departmentId         String
+  department           Department               @relation(fields: [departmentId], references: [id])
+  assignedRecruiters   User[]                   @relation("AssignedRecruiters")
+  hiringManagerId      String
+  hiringManager        User                     @relation("HiringManager", fields: [hiringManagerId], references: [id])
+  numberOfVacancies    Int?
+  industry             Industries               @default(NONE)
+  jobType              JobType                  @default(FULL_TIME)
+  initiationDate       DateTime?
+  targetDate           DateTime?
+  status               JobOpeningStatus         @default(DRAFT)
+  salaryRange          String?
+  experienceLevel      WorkExperience           @default(NONE)
+  jobLocation          JobLocation              @default(ONSITE)
+  addressId            Int?
+  address              JobAddress?              @relation(fields: [addressId], references: [id])
+  requirements         String?
+  jobDescription       String?
+  benefits             String?
+  applicationQuestions JobApplicationQuestion[]
+  pipeline             JobPipeline?
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+}
+
+model Jobtitle {
+  id          Int          @id @default(autoincrement())
+  title       String
+  jobOpenings JobOpening[]
+}
+
+model JobAddress {
+  id          Int          @id @default(autoincrement())
+  addressLine String
+  province    String?
+  region      String?
+  country     String?
+  postalCode  String?
+  JobOpening  JobOpening[]
+}
+
+model JobApplicationQuestion {
+  id           Int        @id @default(autoincrement())
+  jobOpening   JobOpening @relation(fields: [jobOpeningId], references: [id])
+  jobOpeningId String
+
+  questionType           ApplicationQuestionType?
+  AdditionalQuestionType AppplicationAdditionalQuestionType?
+  defaultQuestionType    ApplicationDefaultQuestionType?
+
+  question   String
+  options    String[] @default([])
+  isRequired Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model JobPipeline {
+  id           String     @id @default(uuid())
+  jobOpening   JobOpening @relation(fields: [jobOpeningId], references: [id])
+  jobOpeningId String     @unique
+
+  stages      Json
+  createdBy   User   @relation(fields: [createdById], references: [id])
+  createdById String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum JobOpeningStatus {
+  DRAFT
+  OPEN
+  ON_HOLD
+  FILLED
+  CANCELLED
+  CLOSED
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  PERMANENT
+  CONTRACT
+  INTERNSHIP
+  ANY
+}
+
+enum WorkExperience {
+  NONE
+  FRESHER
+  ZERO_TO_ONE_YEAR
+  ONE_TO_TWO_YEARS
+  TWO_TO_THREE_YEARS
+  FIVE_PLUS_YEARS
+}
+
+enum JobLocation {
+  REMOTE
+  ONSITE
+  HYBRID
+}
+
+enum ApplicationQuestionType {
+  DEFAULT
+  ADDITIONAL
+}
+
+enum AppplicationAdditionalQuestionType {
+  SHORT_ANSWER
+  LONG_ANSWER
+  YES_NO
+  MULTIPLE_CHOICE
+  FILE_UPLOAD
+}
+
+enum ApplicationDefaultQuestionType {
+  RESUME
+  COVER_LETTER
+  HIGHER_EDUCATION
+  DESIRED_SALARY
+  ADDRESS
+  LINKEDIN_URL
+  COLLEGE_UNIVERSITY
+  CURRENT_COMPANY_NAME
+  REFFERED_BY
+  WEBSITE_PORTFOLIO
+}
+
+enum JobPipelineStageType {
+  NEW
+  RESUME_SHORTLIST
+  PHONE_SCREEN
+  INTERVIEW
+  APTITUDE_ONLIE_ASSESSMENT
+  TECHNICAL_INTERVIEW_R_1
+  TECHNICAL_INTERVIEW_R_2
+  MANAGERIAL_INTERVIEW
+  HR_INTERVIEW
+  OFFER
+  HIRED
+}
+
+enum Industries {
+  NONE
+  ADMINISTRATION
+  ADVERTISING
+  AGRICULTURE
+  AGRICULTURE_CONSTRUCTION
+  ARTS_GRAPHICS
+  AIRLINE_AVIATION
+  ACCOUNTING
+  AUTOMOTIVE
+  BANKING
+  BIOTECHNOLOGY
+  BROADCASTING
+  BUSINESS_MANAGEMENT
+  CHARITY
+  CATERING
+  CUSTOMER_SERVICE
+  CHEMICALS
+  CONSTRUCTION
+  COMMUNICATIONS
+  CONSULTING
+  COMPUTER
+  CONSUMER
+  COSMETICS
+  DESIGN
+  DEFENCE
+  EDUCATION
+  ELECTRONICS
+  ENGINEERING
+  EMPLOYMENT_RECRUITING_STAFFING
+  ENVIRONMENTAL
+  EXERCISE_FITNESS
+  EXPORT_IMPORT
+  FINANCIAL_SERVICES
+  FASHION
+  FMCG_FOODS_BEVERAGE
+  FERTILIZERS_PESTICIDES
+  FURNITURE
+  GROCERY
+  GAS
+  GOVERNMENT
+  GOVERNMENT_MILITARY
+  GOVERMENT_PUBLIC_SECTOR
+  GEMS_JEWELLERY
+  HEALTH_CARE
+  HUMAN_RESOURCES
+  HOSPITALITY
+  HOTELS_LODGING
+  HVAC
+  HARDWARE
+  INSURANCE
+  INSTALLATION
+  IT_SERVICES
+  INDUSTRIAL
+  INTERNET_SERVICES
+  IMPORT_EXPORT
+  LEGAL
+  LOGISTICS
+  LANDSCAPING
+  LEISURE_SPORT
+  LIBRARY_SCIENCE
+  MARKETING
+  MANUFACTURING
+  MANAGEMENT
+  MERCHANDISING
+  MEDICAL
+  MEDIA
+  METALS
+  MINING
+  MILITARY
+  MORTGAGE
+  MARINE
+  MARITIME
+  NONPROFIT_CHARITABLE_ORGANIZATIONS
+  NGO_SOCIAL_SERVICES
+  NEWSPAPER
+  OIL_GAS
+  OTHER
+  OTHER_NOT_CLASSIFIED
+  PHARMA
+  POLYMER_PLASTIC_RUBBER
+  PHARMA_BIOTECH_CLINICAL_RESEARCH
+  PUBLIC_SECTOR_GOVERNMENT
+  PRINTING_PACKAGING_PUBLISHING
+  PERSONAL_HOUSEHOLD_SERVICES
+  PROPERTY_REAL_ESTATE
+  PAPER
+  PET_STORE
+  PUBLIC_RELATIONS
+  REAL_ESTATE
+  RETAIL
+  RETAIL_WHOLESALE
+  RECREATION
+  REAL_ESTATE_PROPERTY
+  RECRUITMENT_EMPLOYMENT_FIRM
+  REAL_ESTATE_PROPERTY_MANAGEMENT
+  RESTAURANT_FOOD_SERVICES
+  RENTAL_SERVICES
+  RESEARCH_DEVELOPMENT
+  REPAIR_MAINTENANCE_SERVICES
+  SERVICES
+  SALES_MARKETING
+  SCIENCE_TECHNOLOGY
+  SECURITY_LAW_ENFORCEMENT
+  SHIPPING_MARINE
+  SECURITY_SURVEILLANCE
+  SPORTS_PHYSICAL_RECREATION
+  STAFFING_EMPLOYMENT_AGENCIES
+  SOCIAL_SERVICES
+  SPORTS_LEISURE_LIFESTYLE
+  SEMICONDUCTOR
+  TECHNOLOGY
+  SERVICES_CORPORATE_B2B
+  TRAVEL
+  TRAINING
+  TRANSPORTATION
+  TELECOMMUNICATIONS
+  TRADE_SERVICES
+  TRAVEL_TOURISM
+  TEXTILES_GARMENTS_ACCESSORIES
+  TYRES
+  UTILITIES
+  WIRELESS
+  WOOD_FIBRE_PAPER
+  WASTE_MANAGEMENT
+  WHOLESALE_TRADE_IMPORT_EXPORT
 }

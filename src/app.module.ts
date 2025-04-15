@@ -5,9 +5,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './users/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { DepartmentModule } from './department/department.module';
+import { JobOpeningModule } from './job-openings/job-openings.module';
 
 @Module({
-  imports: [PrismaModule, UserModule,DepartmentModule,ConfigModule.forRoot({
+  imports: [PrismaModule, UserModule,DepartmentModule,JobOpeningModule,ConfigModule.forRoot({
     isGlobal: true,        
     envFilePath: '.env'})],
   controllers: [AppController],

@@ -3,7 +3,7 @@ import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
 import { GetDepartmentDto } from './dto/get-department.dto';
 import { jwtPayload } from 'src/users/types/jwtPayload';
-import { PrismaService } from 'src/prisma/prisma.service';
+import {PrismaService} from "../prisma/prisma.service" 
 
 @Injectable()
 export class DepartmentService {
