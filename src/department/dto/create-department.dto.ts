@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsMongoId, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateDepartmentDto {
   @ApiProperty()
@@ -7,6 +7,5 @@ export class CreateDepartmentDto {
   name: string;
 
   @ApiProperty()
-  @IsMongoId()
   departmentLead: string;
 }

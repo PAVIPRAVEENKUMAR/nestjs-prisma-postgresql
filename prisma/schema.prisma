@@ -53,7 +53,7 @@ model JobOpening {
   id                   String                   @id @default(uuid())
   internalJobCode      String
   postingTitle         String                   @unique
-  jobTitleId           Int?
+  jobTitleId           Int?   
   jobTitle             Jobtitle?                @relation(fields: [jobTitleId], references: [id])
   departmentId         String
   department           Department               @relation(fields: [departmentId], references: [id])

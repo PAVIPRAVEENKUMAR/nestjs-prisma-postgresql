@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsEnum, IsNotEmpty, IsDate, IsArray, IsOptional, Min, IsMongoId, IsNumber} from "class-validator";
+import { IsString, IsEnum, IsNotEmpty, IsDate, IsArray, IsOptional, IsNumber} from "class-validator";
 import {Type} from 'class-transformer';
 import {Industries,JobLocation, JobType,WorkExperience,} from 'src/shared/enums/JobOpening.enum';
 import { JobAddressDto } from './address.dto';
@@ -18,24 +18,22 @@ export class CreateJobOpeningDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsMongoId()
+  @IsOptional()
   jobTitle: number;
 
   @ApiProperty()
   @IsString()
-  @IsMongoId()
+  @IsOptional()
   department: string;
 
   @ApiProperty()
   @IsOptional()
   @IsArray()
-  @IsMongoId({ each: true })
   assignedRecruiters?: string[];
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @IsMongoId()
   hiringManager: string;
 
   @ApiProperty()
